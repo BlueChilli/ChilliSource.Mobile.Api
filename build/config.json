@@ -1,0 +1,22 @@
+{
+	"productName" : "ChilliSource Mobile Api",
+	"projectName" : "ChilliSource.Mobile.Api",
+	"githubOwner": "BlueChilli",
+	"githubRepository": "ChilliSource.Mobile.Api",
+	"packageWhiteList": ["ChilliSource.Mobile.Api"],
+	"solutionFile" : "../src/ChilliSource.Mobile.Api.sln",
+	"tags": [ "ChilliSource", "ChilliSource Mobile Api"],
+	"authors" : ["Blue Chilli Technology Pty Ltd"],
+	"copyright" : "Copyright Blue Chilli Technology Pty Ltd 2017",
+	"iconUrl": "https://avatars0.githubusercontent.com/u/5924219?v=3&s=200",
+	"testProjectPath": "",
+	"runUnitTests" : false,
+	"runSimulatorTests" : true,
+	"iosTestAppPath": "../src/Tests/ChilliSource.Mobile.Tests.iOS/bin/iPhoneSimulator/Release/ChilliSource.Mobile.Tests.app",
+	"androidTestAppPath":"../src/Tests/ChilliSource.Mobile.Tests.Droid/ChilliSource.Mobile.Tests.Droid.csproj",
+	"nuspecRootPath" : "../src/",
+	"testAppBundleId": "com.bluechilli.chillisource.mobile.tests",
+	"simulatorRuntimes": ["iOS 10.3", "iOS 10.2"],
+	"simulatorDevice" : "iPhone 6s",
+	"artifactDirectory" : "../build/artifacts"
+}

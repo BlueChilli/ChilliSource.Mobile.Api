@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>ChilliSource.Mobile.Api</id>
+    <version>$version$</version>
+    <title>ChilliSource Mobile Api</title>
+    <description>Api Client Plugin</description>
+    <authors>$authors$</authors>
+    <owners>$owners$</owners>
+    <requireLicenseAcceptance>$requireLicenseAcceptance$</requireLicenseAcceptance>
+    <copyright>$copyright$</copyright>
+    <projectUrl>$projectUrl$</projectUrl>    
+    <licenseUrl>$licenceUrl$</licenseUrl>
+    <releaseNotes>$releaseNotes$</releaseNotes>
+    <tags>$tags$</tags>
+
+    <dependencies>
+      <group>
+        <dependency id="ChilliSource.Mobile.Core" version="1.0.0" />
+        <dependency id="refit" version="3.0.2" />
+        <dependency id="Xam.Plugin.Connectivity" version="2.2.12" />
+        <dependency id="Newtonsoft.Json" version="9.0.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <!-- Android -->
+    <file src="ChilliSource.Mobile.Api.Droid/bin/ChilliSource.Mobile.Api.dll" target="lib/MonoAndroid403/ChilliSource.Mobile.Api.dll" />
+
+    <!-- iOS -->
+    <file src="ChilliSource.Mobile.Api.iOS/bin/ChilliSource.Mobile.Api.dll" target="lib/Xamarin.iOS10/ChilliSource.Mobile.Api.dll" />
+   
+  </files>
+</package>

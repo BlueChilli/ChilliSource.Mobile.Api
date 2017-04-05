@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{68CE3CD3-115C-4946-8FD5-505DFFC74675}</ProjectGuid>
+    <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ChilliSource.Mobile.Api</RootNamespace>
+    <AssemblyName>ChilliSource.Mobile.Api</AssemblyName>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <ReleaseVersion>1.0.0</ReleaseVersion>
+    <SynchReleaseVersion>false</SynchReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
+    <MtouchTlsProvider>Default</MtouchTlsProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin</OutputPath>
+    <DefineConstants></DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
+    <MtouchTlsProvider>Default</MtouchTlsProvider>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Xamarin.iOS" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Buffers">
+      <HintPath>..\packages\System.Buffers.4.0.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="Microsoft.Extensions.Primitives">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.1.0.0\lib\netstandard1.0\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web">
+      <HintPath>..\packages\System.Text.Encodings.Web.4.0.0\lib\netstandard1.0\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.WebUtilities">
+      <HintPath>..\packages\Microsoft.AspNetCore.WebUtilities.1.0.0\lib\netstandard1.3\Microsoft.AspNetCore.WebUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Connectivity.Abstractions">
+      <HintPath>..\packages\Xam.Plugin.Connectivity.2.3.0\lib\Xamarin.iOS10\Plugin.Connectivity.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Connectivity">
+      <HintPath>..\packages\Xam.Plugin.Connectivity.2.3.0\lib\Xamarin.iOS10\Plugin.Connectivity.dll</HintPath>
+    </Reference>
+    <Reference Include="WinInsider.System.Net.Http">
+      <HintPath>..\packages\WinInsider.System.Net.Http.Formatting.1.0.4\lib\netstandard1.1\WinInsider.System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="Refit">
+      <HintPath>..\packages\refit.3.0.2\lib\netstandard1.3\Refit.dll</HintPath>
+    </Reference>
+    <Reference Include="ChilliSource.Mobile.Core">
+      <HintPath>..\packages\ChilliSource.Mobile.Core.1.0.0\lib\Xamarin.iOS10\ChilliSource.Mobile.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="..\ChilliSource.Mobile.Api\ChilliSource.Mobile.Api.projitems" Label="Shared" Condition="Exists('..\ChilliSource.Mobile.Api\ChilliSource.Mobile.Api.projitems')" />
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+  <Import Project="..\packages\refit.3.0.2\build\netstandard1.3\refit.targets" Condition="Exists('..\packages\refit.3.0.2\build\netstandard1.3\refit.targets')" />
+</Project>
