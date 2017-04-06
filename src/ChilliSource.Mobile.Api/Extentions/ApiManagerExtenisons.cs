@@ -61,7 +61,7 @@ namespace ChilliSource.Mobile.Api
 				try
 				{
 					var result = ex.GetErrorResults(ApiConfiguration.DefaultJsonSerializationSettingsFactory());
-					if (String.Equals(result.ErrorMessages(), ErrorMessages.NoNetWorkError, StringComparison.InvariantCultureIgnoreCase))
+					if (String.Equals(result.ErrorMessages(), ErrorMessages.NoNetWorkError, StringComparison.OrdinalIgnoreCase))
 					{
 						return true;
 					}

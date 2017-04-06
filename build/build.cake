@@ -16,7 +16,7 @@ using System.Text.RegularExpressions;
 #tool "GitReleaseManager"
 #tool "GitVersion.CommandLine"
 #tool "GitLink"
-#tool "nuget:?package=xunit.runner.console&version=2.1.0"
+#tool "nuget:?package=xunit.runner.console"
 using Cake.Common.Build.TeamCity;
 using Cake.AppleSimulator.UnitTest;
 using Newtonsoft.Json;
@@ -121,6 +121,7 @@ var artifactDirectory = config.Value<string>("artifactDirectory");
 var packageWhitelist = config.Value<JArray>("packageWhiteList").Values<string>();
 
 var buildSolution = config.Value<string>("solutionFile");
+var configuration = "Release";
 var simulatorRuntimes = config.Value<JArray>("simulatorRuntimes").Values<string>();
 var simulatorDevice = config.Value<string>("simulatorDevice");
 var runUnitTests = config.Value<bool>("runUnitTests");
@@ -293,7 +294,8 @@ Action<string, string> unitTestAndroidApp = (packageId, projectFile) =>
 
 Action<string> RestorePackages = (solution) =>
 {
-    NuGetRestore(solution);
+      DotNetCoreRestore(solution);
+     NuGetRestore(solution);
 };
 
 
@@ -372,54 +374,44 @@ Action<string,string> build = (solution, configuration) =>
     Information("Building {0}", solution);
 	using(BuildBlock("Build")) 
 	{			
-        if(isRunningOnUnix) {
-        	
-			XBuild(solution, settings => {
-				settings
-				.SetConfiguration(configuration)
-				.WithProperty("NoWarn", "1591") // ignore missing XML doc warnings
-				.WithProperty("TreatWarningsAsErrors", treatWarningsAsErrors.ToString())
-				.SetVerbosity(Verbosity.Minimal);
+       var settings = new DotNetCoreBuildSettings
+		{
+			Configuration = configuration
+		};
 
-				var msBuildLogger = GetMSBuildLoggerArguments();
+		if(isTeamCity) {
 
-				if(!string.IsNullOrEmpty(msBuildLogger)) 
-				{
-					settings.ArgumentCustomization = arguments => arguments.Append(string.Format(" /logger:{0}", msBuildLogger));
-				}
-			});
-        }
-        else {
+			var msBuildLogger = GetMSBuildLoggerArguments();
+	
+			settings.ArgumentCustomization = arguments => {
+				 arguments.Clear();
+				
+				 arguments.Append("build");
 
-        	// UWP (project.json) needs to be restored before it will build.
-  			RestorePackages(solution);
+				 // Specific path?
+	            if (solution != null)
+	            {
+	                arguments.AppendQuoted(solution);
+	            }
 
-        	MSBuild(solution, settings => {
-				settings
-				.SetConfiguration(configuration)
-				.WithProperty("NoWarn", "1591") // ignore missing XML doc warnings
-				.WithProperty("TreatWarningsAsErrors", treatWarningsAsErrors.ToString())
-				.SetVerbosity(Verbosity.Minimal)
-				.SetNodeReuse(false);
+				 arguments.Append(string.Format("/p:ci={0}", true));
 
-				settings.ToolVersion = MSBuildToolVersion.VS2015;
-			
-				var msBuildLogger = GetMSBuildLoggerArguments();
-			
-				if(!string.IsNullOrEmpty(msBuildLogger)) 
-				{
-					Information("Using custom MSBuild logger: {0}", msBuildLogger);
-					settings.ArgumentCustomization = arguments =>
+				// Configuration
+	            if (!string.IsNullOrEmpty(settings.Configuration))
+	            {
+	                arguments.Append(string.Format("/p:Configuration={0}", settings.Configuration));
+	            }
+
+
+				 if(!string.IsNullOrEmpty(msBuildLogger)) {
 					arguments.Append(string.Format("/logger:{0}", msBuildLogger));
-				}
-			});
-
-			// seems like it doesn't work for ios
-			using(Block("SourceLink")) 
-			{
-			    SourceLink(solution);
+				 }
+				
+				return arguments;
 			};
-        }
+		}
+		
+		DotNetCoreBuild(solution, settings);
 
 		
     };		
@@ -470,7 +462,7 @@ Task("Build")
     .IsDependentOn("UpdateAssemblyInfo")
     .Does (() =>
 {
-    build(buildSolution, "Release");
+    build(buildSolution, configuration);
 })
 .OnError(exception => {
 	WriteErrorLog("Build failed", "Build", exception);
@@ -529,7 +521,7 @@ Task("RestorePackages")
 });
 
 
-var testProject = config.Value<string>("testProjectPath");
+var testdll = config.Value<string>("testProjectDll");
 Task("RunUnitTests")
     .IsDependentOn("RestorePackages")
     .IsDependentOn("Build")
@@ -539,7 +531,7 @@ Task("RunUnitTests")
 	Information("Running Unit Tests for {0}", buildSolution);
 	using(BuildBlock("RunUnitTests")) 
 	{
-		XUnit2(testProject, new XUnit2Settings {
+		XUnit2(testdll, new XUnit2Settings {
 			OutputDirectory = artifactDirectory,
             XmlReportV1 = false,
             NoAppDomain = true
