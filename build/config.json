@@ -18,5 +18,5 @@
 	"testAppBundleId": "com.bluechilli.chillisource.mobile.tests",
 	"simulatorRuntimes": ["iOS 10.3", "iOS 10.2"],
 	"simulatorDevice" : "iPhone 6s",
-	"artifactDirectory" : "../build/artifacts"
+	"artifactDirectory" : "../build/artifacts/"
 }
