@@ -374,7 +374,7 @@ Action<string,string> build = (solution, buildConfiguration) =>
     Information("Building {0}", solution);
 	using(BuildBlock("Build")) 
 	{			
-       var settings = new DotNetCoreBuildSettings
+       /*var settings = new DotNetCoreBuildSettings
 		{
 			Configuration = buildConfiguration
 		};
@@ -411,7 +411,25 @@ Action<string,string> build = (solution, buildConfiguration) =>
 			};
 		}
 		
-		DotNetCoreBuild(solution, settings);
+		DotNetCoreBuild(solution, settings);*/
+
+		MSBuild(solution, settings => {
+				settings
+				.SetConfiguration(buildConfiguration)
+				.WithProperty("NoWarn", "1591") // ignore missing XML doc warnings
+				.WithProperty("TreatWarningsAsErrors", treatWarningsAsErrors.ToString())
+				.SetVerbosity(Verbosity.Minimal)
+				.SetNodeReuse(false);
+
+				var msBuildLogger = GetMSBuildLoggerArguments();
+			
+				if(!string.IsNullOrEmpty(msBuildLogger)) 
+				{
+					Information("Using custom MSBuild logger: {0}", msBuildLogger);
+					settings.ArgumentCustomization = arguments =>
+					arguments.Append(string.Format("/logger:{0}", msBuildLogger));
+				}
+			});
 
 		
     };		
@@ -526,6 +544,7 @@ Task("RunUnitTests")
     .IsDependentOn("RestorePackages")
     .IsDependentOn("Build")
     .WithCriteria(() => runUnitTests)
+    .WithCriteria(() => !isRunningOnUnix)
     .Does(() =>
 {
 	Information("Running Unit Tests for {0}", buildSolution);
