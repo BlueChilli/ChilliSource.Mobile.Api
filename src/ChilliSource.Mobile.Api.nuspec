@@ -17,9 +17,9 @@
     <dependencies>
       <group>
         <dependency id="ChilliSource.Mobile.Core" version="1.0.0" />
-        <dependency id="refit" version="3.0.2" />
+        <dependency id="refit" version="3.0.3" />
         <dependency id="Xam.Plugin.Connectivity" version="2.2.12" />
-        <dependency id="Newtonsoft.Json" version="9.0.0" />
+        <dependency id="Newtonsoft.Json" version="10.0.2" />
       </group>
     </dependencies>
   </metadata>
