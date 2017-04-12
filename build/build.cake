@@ -369,14 +369,14 @@ Func<string, IDisposable> Block = message => {
 	return null;
 };
 
-Action<string,string> build = (solution, configuration) =>
+Action<string,string> build = (solution, buildConfiguration) =>
 {
     Information("Building {0}", solution);
 	using(BuildBlock("Build")) 
 	{			
        var settings = new DotNetCoreBuildSettings
 		{
-			Configuration = configuration
+			Configuration = buildConfiguration
 		};
 
 		if(isTeamCity) {
