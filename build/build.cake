@@ -374,45 +374,6 @@ Action<string,string> build = (solution, buildConfiguration) =>
     Information("Building {0}", solution);
 	using(BuildBlock("Build")) 
 	{			
-       /*var settings = new DotNetCoreBuildSettings
-		{
-			Configuration = buildConfiguration
-		};
-
-		if(isTeamCity) {
-
-			var msBuildLogger = GetMSBuildLoggerArguments();
-	
-			settings.ArgumentCustomization = arguments => {
-				 arguments.Clear();
-				
-				 arguments.Append("build");
-
-				 // Specific path?
-	            if (solution != null)
-	            {
-	                arguments.AppendQuoted(solution);
-	            }
-
-				 arguments.Append(string.Format("/p:ci={0}", true));
-
-				// Configuration
-	            if (!string.IsNullOrEmpty(settings.Configuration))
-	            {
-	                arguments.Append(string.Format("/p:Configuration={0}", settings.Configuration));
-	            }
-
-
-				 if(!string.IsNullOrEmpty(msBuildLogger)) {
-					arguments.Append(string.Format("/logger:{0}", msBuildLogger));
-				 }
-				
-				return arguments;
-			};
-		}
-		
-		DotNetCoreBuild(solution, settings);*/
-
 		MSBuild(solution, settings => {
 				settings
 				.SetConfiguration(buildConfiguration)
