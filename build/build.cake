@@ -294,8 +294,18 @@ Action<string, string> unitTestAndroidApp = (packageId, projectFile) =>
 
 Action<string> RestorePackages = (solution) =>
 {
-      DotNetCoreRestore(solution);
-     NuGetRestore(solution);
+   MSBuild(solution, settings => {
+		settings
+		.SetConfiguration(configuration)
+		.WithProperty("NoWarn", "1591") // ignore missing XML doc warnings
+		.WithProperty("TreatWarningsAsErrors", treatWarningsAsErrors.ToString())
+		.SetVerbosity(Verbosity.Minimal)
+		.SetNodeReuse(false);
+
+		settings.ArgumentCustomization = arguments =>
+		arguments.Append("/t:restore");
+	});
+
 };
 
 
