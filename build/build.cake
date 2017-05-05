@@ -74,8 +74,6 @@ if(config == null) {
 	throw new Exception(string.Format("config.json can not be found at {0}", configFilePath));
 }
 
-
-
 // Build configuration
 var productName = config.Value<string>("productName");
 var project = config.Value<string>("projectName");
@@ -87,10 +85,11 @@ var teamCity = BuildSystem.TeamCity;
 var branch = EnvironmentVariable("Git_Branch");
 var isPullRequest = !String.IsNullOrEmpty(branch) && branch.ToUpper().Contains("PULL-REQUEST"); //teamCity.Environment.PullRequest.IsPullRequest;
 var projectName =  EnvironmentVariable("TEAMCITY_PROJECT_NAME"); //  teamCity.Environment.Project.Name;
+var isRepository = StringComparer.OrdinalIgnoreCase.Equals(productName, projectName);
 var isTagged = !String.IsNullOrEmpty(branch) && branch.ToUpper().Contains("TAGS");
 var buildConfName = EnvironmentVariable("TEAMCITY_BUILDCONF_NAME"); //teamCity.Environment.Build.BuildConfName
 var buildNumber = GetEnvironmentInteger("BUILD_NUMBER");
-var isReleaseBranch = StringComparer.OrdinalIgnoreCase.Equals("master", buildConfName)|| StringComparer.OrdinalIgnoreCase.Equals("release", buildConfName);
+var isReleaseBranch = StringComparer.OrdinalIgnoreCase.Equals("master", buildConfName) || StringComparer.OrdinalIgnoreCase.Equals("Release", buildConfName);
 
 var shouldAddLicenseHeader = false;
 if(!string.IsNullOrEmpty(EnvironmentVariable("ShouldAddLicenseHeader"))) {
