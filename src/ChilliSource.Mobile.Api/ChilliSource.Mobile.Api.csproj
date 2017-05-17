@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;net45;</TargetFrameworks>
+    <TargetFrameworks>netstandard1.6;net462;</TargetFrameworks>
     <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
     <PackageTargetFallback>$(PackageTargetFallback);portable-win+net45+wp8+win81+wpa8</PackageTargetFallback>
     <AssemblyName>ChilliSource.Mobile.Api</AssemblyName>
@@ -45,11 +45,12 @@
   <ItemGroup>
     <DotNetCliToolReference Include="dotnet-sourcelink" Version="2.0.2" />
     <DotNetCliToolReference Include="dotnet-sourcelink-git" Version="2.0.2" />
-    <PackageReference Include="ChilliSource.Mobile.Core" Version="1.0.0" />
+    <PackageReference Include="ChilliSource.Mobile.Core" Version="1.0.3-alpha0023" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
     <PackageReference Include="refit" Version="3.0.2" />
     <PackageReference Include="SourceLink.Create.GitHub" Version="2.1.0" PrivateAssets="all" />
     <PackageReference Include="Xam.Plugin.Connectivity" Version="2.3.0" />
   </ItemGroup>
+
 
 </Project>
