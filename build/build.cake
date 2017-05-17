@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 //////////////////////////////////////////////////////////////////////
 
 #addin "Cake.FileHelpers"
+#addin "Cake.Watch"
 #addin "Cake.AppleSimulator"
 #addin "Cake.Android.Adb"
 #addin "Cake.Xamarin"
@@ -512,7 +513,7 @@ Task("RunUnitTests")
 		XUnit2(testdll, new XUnit2Settings {
 			OutputDirectory = artifactDirectory,
             XmlReportV1 = false,
-            NoAppDomain = true
+            NoAppDomain = false
 		});
 	};
 });
@@ -744,6 +745,25 @@ Task("Default")
 {
 
 });
+
+Task("WatchFiles")
+    .Does(() =>
+{
+	var settings = new WatchSettings { Recursive = true, Path = "../src", Pattern = "*.cs" };
+	Watch(settings , (changes) => {
+	    var list = changes.ToList();
+	    if(list.Count() > 0) {
+	    	RunTarget("RunUnitTests");
+	    }
+	});
+});
+
+
+// Used to test Setup / Teardown
+Task("None")
+	.Does(() => {
+
+	});
 
 
 //////////////////////////////////////////////////////////////////////

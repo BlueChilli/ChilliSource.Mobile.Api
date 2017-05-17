@@ -28,7 +28,7 @@ namespace Api
 		}
 
 		[Fact]
-		public void CreateClient_ShouldThrowException_WhenJsonSerizationSettingsFactory_Is_Null()
+		public void CreateClient_ShouldThrowException_WhenJsonSerializationSettingsFactory_Is_Null()
 		{
 			Assert.Throws<ArgumentNullException>(() => ApiClientFactory<ITestApi>.Create("http://www.test.com/api", () =>
 			{

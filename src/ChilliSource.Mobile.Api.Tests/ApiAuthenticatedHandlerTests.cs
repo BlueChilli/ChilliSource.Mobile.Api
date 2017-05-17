@@ -171,7 +171,7 @@ namespace Api
 
 		}
 
-		[Fact]
+		[Fact()]
 		public async Task ApiAuthenticationHandler_ShouldReturnServiceResultWithCorrectData()
 		{
 			handler = new MockHttpMessageHandler();

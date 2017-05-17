@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package>
   <metadata>
     <id>ChilliSource.Mobile.Api</id>
@@ -28,8 +28,8 @@
     <file src="bin/Release/netstandard1.6/ChilliSource.Mobile.Api.xml" target="lib\netstandard1.6" />   
     <file src="bin/Release/netstandard1.6/ChilliSource.Mobile.Api.pdb" target="lib\netstandard1.6" />   
     <file src="bin/Release/netstandard1.6/ChilliSource.Mobile.Api.deps.json" target="lib\netstandard1.6" />   
-    <file src="bin/Release/net45/ChilliSource.Mobile.Api.dll" target="lib\net45" /> 
-    <file src="bin/Release/net45/ChilliSource.Mobile.Api.xml" target="lib\net45" />   
-    <file src="bin/Release/net45/ChilliSource.Mobile.Api.pdb" target="lib\net45" />     
+    <file src="bin/Release/net462/ChilliSource.Mobile.Api.dll" target="lib\net462" /> 
+    <file src="bin/Release/net462/ChilliSource.Mobile.Api.xml" target="lib\net462" />   
+    <file src="bin/Release/net462/ChilliSource.Mobile.Api.pdb" target="lib\net462" />     
   </files>
 </package>
