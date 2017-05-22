@@ -31,14 +31,24 @@ namespace ChilliSource.Mobile.Api
 			UserKey = userkey;
 		}
 
+        /// <summary>
+        /// gets api for api request
+        /// </summary>
 		public string ApiKey { get; }
 		public string AppId => _environmentInformation.AppId;
 		public string AppVersion => _environmentInformation.AppVersion;
 		public string Timezone => _environmentInformation.Timezone;
 		public string Platform => _environmentInformation.Platform;
+        /// <summary>
+        /// gets auth key for api request
+        /// </summary>
 		public string UserKey { get; set; }
 
-
+        /// <summary>
+        /// update the user key
+        /// </summary>
+        /// <param name="userKey"></param>
+        /// <returns></returns>
 		public ApiToken WithUserKey(string userKey)
 		{
 			return new ApiToken(this.ApiKey, _environmentInformation, userKey);
@@ -51,6 +61,10 @@ namespace ChilliSource.Mobile.Api
 
 		public static ApiToken Empty => new ApiToken(String.Empty, EnvironmentInformation.Empty, String.Empty);
 
+        /// <summary>
+        /// check that this token is empty
+        /// </summary>
+        /// <returns></returns>
 		public bool IsEmpty()
 		{
 			return String.IsNullOrWhiteSpace(ApiKey)
@@ -61,6 +75,10 @@ namespace ChilliSource.Mobile.Api
 						 && String.IsNullOrWhiteSpace(UserKey);
 		}
 
+        /// <summary>
+        /// check that token has authentication information
+        /// </summary>
+        /// <returns></returns>
 		public bool HasUserKey()
 		{
 			return !String.IsNullOrWhiteSpace(UserKey);

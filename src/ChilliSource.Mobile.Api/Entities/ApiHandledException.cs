@@ -32,6 +32,9 @@ namespace ChilliSource.Mobile.Api
 			ApiException = Option<ApiException>.None;
 		}
 
+        /// <summary>
+        /// gets api exception
+        /// </summary>
         public Option<ApiException> ApiException { get;}
 
         

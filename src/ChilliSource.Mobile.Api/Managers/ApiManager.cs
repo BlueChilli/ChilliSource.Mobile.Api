@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace ChilliSource.Mobile.Api
 {
     /// <summary>
-    /// Manages the api proxy and api configuration
+    /// Facades for managing initialization the api client proxy and making api request
     /// </summary>
     /// <typeparam name="T"></typeparam>
 	public class ApiManager<T> : IApi<T>

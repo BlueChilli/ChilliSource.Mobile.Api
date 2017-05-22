@@ -11,6 +11,7 @@ See the LICENSE file in the project root for more information.
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ChilliSource.Core.Extensions;
 using ChilliSource.Mobile.Core;
 using Newtonsoft.Json;
 using Refit;
@@ -47,7 +48,7 @@ namespace ChilliSource.Mobile.Api
 		}
 
         /// <summary>
-        /// /method to extract Error Results from exception response
+        /// method to extract Error Results from exception response
         /// </summary>
         /// <param name="ex"></param>
         /// <param name="settings"></param>

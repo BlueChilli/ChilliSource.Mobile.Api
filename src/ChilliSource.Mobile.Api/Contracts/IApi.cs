@@ -15,8 +15,17 @@ namespace ChilliSource.Mobile.Api
 {
 	public interface IApi<T>
 	{
+        /// <summary>
+        /// gets Refit Api client proxy interface
+        /// </summary>
 		T Client { get; }
+        /// <summary>
+        /// gets json.net serialization settings
+        /// </summary>
 		JsonSerializerSettings JsonSerializationSettings { get; }
+        /// <summary>
+        /// gets base url of the api eg: https://api.bluechilli.com/
+        /// </summary>
 		string BaseUrl { get; }
 	}
 }

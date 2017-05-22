@@ -51,8 +51,7 @@ namespace ChilliSource.Mobile.Api
 			});
 		}
 
-
-		public static T Create(string baseApiUrl, Func<HttpMessageHandler> messageHandlersFactory, Func<JsonSerializerSettings> jsonSerializerSettingsFactory)
+		internal static T Create(string baseApiUrl, Func<HttpMessageHandler> messageHandlersFactory, Func<JsonSerializerSettings> jsonSerializerSettingsFactory)
 		{
 			return CreateClient(baseApiUrl, messageHandlersFactory, jsonSerializerSettingsFactory);
 		}
