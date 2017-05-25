@@ -1,7 +1,7 @@
 # Contributing to ChilliSource.Mobile.Api #
 
-Your contributions to ChilliSource.Mobile.Api are very welcome. Please grab and fix bugs and feature requests from the list of [issues](https://github.com/BlueChilli/ChilliSource.Mobile.Api/issues)
-To report a bug or feature request, please log a new issue [here](https://github.com/BlueChilli/ChilliSource.Mobile.Api/issues).
+Your contributions to ChilliSource.Mobile.Api are very welcome. Please grab and fix bugs and feature requests from the list of [issues](https://github.com/BlueChilli/ChilliSource.Mobile.Api/issues).
+To report a bug or feature request, please log a new issue [here](https://github.com/BlueChilli/ChilliSource.Mobile.Api/issues/new).
 
 ## Contribution Guide ##
 
@@ -13,7 +13,7 @@ To contribute, please follow these steps:
 2. create a topic branch from `develop` in your forked repo
 3. resolve issues on your fork's topic branch
 4. ensure that your code complies with the [checklist](#checklist) below
-5. run `./build.sh` and fix any errors or failed unit tests
+5. run `./build.sh` from the `build` folder and fix any errors or failed unit tests
 6. submit a pull request to our `develop` branch (please see [here](https://help.github.com/articles/about-pull-requests/) for help with pull requests)
 
 ### Checklist ###
