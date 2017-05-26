@@ -10,7 +10,7 @@ This project is part of the ChilliSource framework developed by [BlueChilli](htt
 
 ## Usage ##
 
-**API Contract**
+### API Contract ###
 
 Create a [Refit](https://github.com/paulcbetts/refit) interface defining the API endpoints you would like to access:
 
@@ -26,7 +26,7 @@ public interface IExampleApi
 ```
 The classes ```LoginRequest```, ```AuthenticatedUser```, and ```MessageResponse``` represent the Json entities that your API returns or expects to receive.
 
-**API Header Fields**
+### API Header Fields ###
 
 Provide the header fields that your API requires for authorization and tracking by creating an ```ApiToken```:
 ```csharp
@@ -37,13 +37,13 @@ var token = new ApiToken(apiKey, info, null);
 
 Optionally you can also specify a user key in the token, either in the constructor or by setting the token's ```UserKey``` property.
 
-**API Configuration**
+### API Configuration ###
 
 Create the ```ApiConfiguration``` using your API URL and the API token:
 ```csharp
 var config = new ApiConfiguration(apiUrl, () =>
 {
-    return new ApiAuthenticatedHandler(() =>
+    return new ApiAuthenticationHandler(() =>
     {
         return Task.FromResult(token);
     }, new NoNetworkHandler(CrossConnectivity.Current, new NativeMessageHandler
@@ -53,14 +53,33 @@ var config = new ApiConfiguration(apiUrl, () =>
 });
 ```
 
-**API Manager**
+The ```ApiConfiguration`` class can take multiple HTTP handlers to deal with different types
+of HTTP events, such as an authentication request or a network connectivity issue.
+
+The ```NoNetworkHandler``` class relies on the [Connectivity Plugin](https://github.com/jamesmontemagno/ConnectivityPlugin);
+
+Additionally you can also handle the scenarios of the session expiring or the network connection becoming unavailable:
+
+```csharp
+config.OnSessionExpired = result =>
+        {
+            Console.WriteLine("Session has expired");            
+        };
+
+config.OnNoNetworkConnectivity = result =>
+        {
+            Console.WriteLine("Network connection unavailable");            
+        };
+```
+
+### API Manager ###
 
 Create a new ```ApiManager``` using the configuration and Refit interface you created in the steps above:
 ```csharp
 var manager = new ApiManager<IExampleApi>(config);
 ```
 
-**Invoking API Endpoints**
+### Invoking API Endpoints ###
 
 Now you can invoke your API's endpoints in a type-safe manner through the ```ApiManager``` instance:
 
@@ -132,34 +151,23 @@ var loginResult = await manager.Client
                     }); 
 ```
 
-**Testing if there is no Network Connection**
+### Handling error statues for each request ###
 
-You can test if there is no network connection like this:
+In addition to the generic event handlers defined in the [API Configuration](#api-configuration) above, 
+you can also define handlers for each request:
+
 ```csharp
-    var handler = new ApiExceptionHandlerConfig(onNoNetworkConnectivity: result =>
-                    {
-                        hasNetwork = false;
-                    });
+    var handler = new ApiExceptionHandlerConfig(
+                    onNoNetworkConnectivity: result =>
+                        {
+                            hasNetwork = false;
+                        },
+                    onSessionExpired: result =>
+                        {
+                            hasSessionExpired = true;
+                        });
 
     var result = await manager.Client
-            .Login(new LoginRequest("username", "password"))
-            .WaitForResponse(handler, continueOnCapturedContext: true)
-            .OnFailure((failureResult) =>
-                {
-                    Console.WriteLine(failureResult.StatusCode);
-                });
-```
-
-**Testing if the API Session has expired**
-
-You can test if the API session has expired like this:
-```csharp
-var handler = new ApiExceptionHandlerConfig(onSessionExpired: result =>
-                {
-                    hasSessionExpired = true;
-                });
-
-var result = await manager.Client
             .Login(new LoginRequest("username", "password"))
             .WaitForResponse(handler, continueOnCapturedContext: true)
             .OnFailure((failureResult) =>
