@@ -26,9 +26,9 @@ public interface IExampleApi
 ```
 The classes ```LoginRequest```, ```AuthenticatedUser```, and ```MessageResponse``` represent the Json entities that your API returns or expects to receive.
 
-**API Authorization and Meta-data**
+**API Header Fields**
 
-Provide the header fields that your API requires by creating an ```ApiToken```:
+Provide the header fields that your API requires for authorization and tracking by creating an ```ApiToken```:
 ```csharp
 var info = new EnvironmentInformation(environment, appId, appVersion, timeZone, platform, appName, deviceName);
 var token = new ApiToken(apiKey, info, null);
@@ -72,7 +72,8 @@ if (loginResult.IsFailure)
 }
 else
 {
-    Console.WriteLine(loginResult.Result.Name);
+    var authenticatedUser = loginResult.Result;
+    Console.WriteLine("Welcome " + authenticatedUser.Name);
 }
 ```
 
