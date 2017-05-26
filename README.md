@@ -59,7 +59,7 @@ Create a new ```ApiManager``` using the configuration and Refit interface you cr
 var manager = new ApiManager<IExampleApi>(config);
 ```
 
-**Invoke API Endpoints**
+**Invoking API Endpoints**
 
 Now you can invoke your API's endpoints in a type-safe manner through the ```ApiManager``` instance:
 
