@@ -30,7 +30,8 @@ The classes ```LoginRequest```, ```AuthenticatedUser```, and ```MessageResponse`
 
 Provide the header fields that your API requires for authorization and tracking by creating an ```ApiToken```:
 ```csharp
-var info = new EnvironmentInformation(environment, appId, appVersion, timeZone, platform, appName, deviceName);
+var info = new EnvironmentInformation(environment, appId, appVersion, 
+    timeZone, platform, appName, deviceName);
 var token = new ApiToken(apiKey, info, null);
 ```
 
@@ -64,7 +65,9 @@ var manager = new ApiManager<IExampleApi>(config);
 Now you can invoke your API's endpoints in a type-safe manner through the ```ApiManager``` instance:
 
 ```csharp
-var loginResult = await manager.Client.Login(new LoginRequest("username", "password")).WaitForResponse(true);
+var loginResult = await manager.Client
+                .Login(new LoginRequest("username", "password"))
+                .WaitForResponse(continueOnCapturedContext: true);
 
 if (loginResult.IsFailure)
 {
@@ -74,6 +77,96 @@ else
 {
     var authenticatedUser = loginResult.Result;
     Console.WriteLine("Welcome " + authenticatedUser.Name);
+}
+```
+
+You can also use a fluent syntax to check for the various result states:
+
+```csharp
+var loginResult = await manager.Client
+                .Login(new LoginRequest("username", "password"))
+                .WaitForResponse(continueOnCapturedContext: true)
+                .OnFailure((result) =>
+                {
+                    Console.WriteLine(result.StatusCode);
+                })
+                .OnCancelled(() =>
+                {
+                    Console.WriteLine("Login cancelled");
+                })
+                .OnSuccess((result) =>
+                {
+                    var authenticatedUser = result.Result;
+                    Console.WriteLine("Welcome: " + authenticatedUser.Name);
+                    return result;
+                }); 
+```
+
+Or asynchronous like this:
+
+```csharp
+var loginResult = await manager.Client
+                .Login(new LoginRequest("username", "password"))
+                .WaitForResponse(continueOnCapturedContext: true)
+                .OnFailure(async result =>
+                {
+                    await Task.Run(() =>
+                    {
+                        Console.WriteLine(result.StatusCode);
+                    });  
+                })
+                .OnCancelled(async result =>
+                {
+                    await Task.Run(() =>
+                    {
+                        Console.WriteLine("Login cancelled");
+                    });
+                })
+                .OnSuccess(async result =>
+                {
+                    await Task.Run(() =>
+                    {
+                        var authenticatedUser = result.Result;
+                        Console.WriteLine("Welcome: " + authenticatedUser.Name);
+                    });
+                }); 
+```
+
+**Testing if there is no Network Connection**
+
+You can test if there is no network connection like this:
+```csharp
+    var handler = new ApiExceptionHandlerConfig(onNoNetworkConnectivity: result =>
+                    {
+                        hasNetwork = false;
+                    });
+
+    var result = await manager.Client
+            .Login(new LoginRequest("username", "password"))
+            .WaitForResponse(handler, continueOnCapturedContext: true);
+
+if (result.IsFailure)
+{
+    Console.WriteLine(result.StatusCode);
+}
+```
+
+**Testing if the API Session has expired**
+
+You can test if the API session has expired like this:
+```csharp
+var handler = new ApiExceptionHandlerConfig(onSessionExpired: result =>
+                {
+                    hasSessionExpired = true;
+                });
+
+var result = await manager.Client
+            .Login(new LoginRequest("username", "password"))
+            .WaitForResponse(handler, continueOnCapturedContext: true);
+
+if (result.IsFailure)
+{
+    Console.WriteLine(result.StatusCode);
 }
 ```
 
