@@ -10,36 +10,37 @@ See the LICENSE file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ChilliSource.Core.Extensions;
-using ChilliSource.Mobile.Core;
 using Newtonsoft.Json;
 using Refit;
 
 namespace ChilliSource.Mobile.Api
 {
-	public static class ApiExceptionExtensions
+    /// <summary>
+    /// Extensions for <see cref="ApiException"/>
+    /// </summary>
+    public static class ApiExceptionExtensions
 	{
         /// <summary>
-        /// method to extract Error Result from exception response
+        /// Extracts an <see cref="ErrorResult"/> from the provided <paramref name="exception"/>
         /// </summary>
-        /// <param name="ex"></param>
-        /// <param name="settings"></param>
-        /// <returns></returns>
-		public static ErrorResult GetErrorResults(this ApiHandledException ex, JsonSerializerSettings settings)
+        /// <param name="exception">API exception response</param>
+        /// <param name="settings">Serializer settings for parsing the exception message</param>
+        /// <returns>A new <see cref="ErrorResult"/> representing the specified <paramref name="exception"/></returns>
+		public static ErrorResult GetErrorResult(this ApiHandledException exception, JsonSerializerSettings settings)
 		{
 
 			var errorResult = new ErrorResult()
 			{
 				Errors = new List<string>()
 					{
-						ex.Message
+						exception.Message
 					}
 			};
 
-			ex.ApiException.Match(arg =>
+			exception.ApiException.Match(arg =>
 			{
-				errorResult = arg.GetErrorResults(settings);
+				errorResult = arg.GetErrorResult(settings);
 			},
 			() => { });
 
@@ -48,30 +49,30 @@ namespace ChilliSource.Mobile.Api
 		}
 
         /// <summary>
-        /// method to extract Error Results from exception response
+        /// Extracts an <see cref="ErrorResult"/> from the provided <paramref name="exception"/>
         /// </summary>
-        /// <param name="ex"></param>
-        /// <param name="settings"></param>
-        /// <returns></returns>
-		public static ErrorResult GetErrorResults(this ApiException ex, JsonSerializerSettings settings)
+        /// <param name="exception">API exception response</param>
+        /// <param name="settings">Serializer settings for parsing the exception message</param>
+        /// <returns>A new <see cref="ErrorResult"/> representing the specified <paramref name="exception"/></returns>
+		public static ErrorResult GetErrorResult(this ApiException exception, JsonSerializerSettings settings)
 		{
 			try
 			{
-				if (ex.HasContent)
+				if (exception.HasContent)
 				{
-					return ex.Content.FromJson<ErrorResult>(settings);
+					return exception.Content.FromJson<ErrorResult>(settings);
 				}
 
 				return new ErrorResult()
 				{
-					ErrorMessage = ex.Message
+					ErrorMessage = exception.Message
 				};
 			}
 			catch (Exception)
 			{
 				return new ErrorResult()
 				{
-					ErrorMessage = ex.Message
+					ErrorMessage = exception.Message
 				};
 			}
 		}

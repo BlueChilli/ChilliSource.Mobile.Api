@@ -15,101 +15,44 @@ using ChilliSource.Mobile.Core;
 using Refit;
 namespace ChilliSource.Mobile.Api
 {
+    /// <summary>
+    /// <see cref="ApiManager{T}"/> extensions
+    /// </summary>
 	public static class ApiManagerExtenisons
-	{
-		internal static void HandleException(ApiException ex, ApiExceptionHandlerConfig config)
-		{
-			if (IsSessionExpired(ex))
-			{
-				HandleSessionExpiry(ex, config);
-			}
-			else if (HasNoNetworkConnectivity(ex, config))
-			{
-				HandleNoNetworkConnectivity(ex, config);
-			}
-			else if (!ex.HasContent)
-			{
-				LogException(ex,"", config.Logger);
-			}
-		}
-
-		internal static void LogException(Exception ex, string message, ILogger logger = null)
-		{
-			logger?.Error(ex, message);
-		}
-
-		internal static bool IsSessionExpired(ApiException ex)
-		{
-			if (ex.StatusCode == HttpStatusCode.Unauthorized)
-			{
-
-				return true;
-			}
-
-			return false;
-		}
-
-		internal static void HandleSessionExpiry(ApiException ex, ApiExceptionHandlerConfig config)
-		{
-			config.OnSessionExpired?.Invoke(ServiceResult.AsFailure(ErrorMessages.SessionTimedout, (int)ex.StatusCode));
-		}
-
-		internal static bool HasNoNetworkConnectivity(ApiException ex, ApiExceptionHandlerConfig config)
-		{
-			if (ex.HasContent && ex.StatusCode == HttpStatusCode.RequestTimeout)
-			{
-				try
-				{
-					var result = ex.GetErrorResults(ApiConfiguration.DefaultJsonSerializationSettingsFactory());
-					if (String.Equals(result.ErrorMessages(), ErrorMessages.NoNetWorkError, StringComparison.OrdinalIgnoreCase))
-					{
-						return true;
-					}
-
-				}
-				catch (Exception exception)
-				{
-					LogException(exception, "No network connectivity");
-				}
-			}
-
-			return false;
-		}
-
-		internal static void HandleNoNetworkConnectivity(ApiException ex, ApiExceptionHandlerConfig config)
-		{
-			var r = ex.GetErrorResults(ApiConfiguration.DefaultJsonSerializationSettingsFactory());
-			config.OnNoNetworkConnectivity?.Invoke(ServiceResult.AsFailure(r.ErrorMessages(), ErrorMessages.NoNetworkErrorCode));
-		}
-
+	{		
         /// <summary>
-        ///  method to wait for response to come back from api request
+        /// Waits for an API request to complete and return a response
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="continueOnCapturedContext"></param>
-        /// <returns></returns>
+        /// <param name="task">A <see cref="Task"/> representing the API request to be awaited</param>
+        /// <param name="continueOnCapturedContext">Specifies whether the resonse should return on the same thread as the request.
+        /// Setting this value to <c>false</c> can improve performance by avoiding thread context switches.</param>
+        /// <returns>A <see cref="ServiceResult"/> instance representing the status of the completed request</returns>
 		public static Task<ServiceResult> WaitForResponse(this Task task, bool continueOnCapturedContext = true)
 		{
 			return WaitForResponse(task, new ApiExceptionHandlerConfig(), continueOnCapturedContext);
 		}
+
         /// <summary>
-        ///  method to wait for response to come back from api request
+        /// Waits for an API request to complete and return a response
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="task"></param>
-        /// <param name="continueOnCapturedContext"></param>
-        /// <returns></returns>
+        /// <param name="task">A <see cref="Task"/> representing the API request to be awaited</param>
+        /// <param name="continueOnCapturedContext">Specifies whether the resonse should return on the same thread as the request.
+        /// Setting this value to <c>false</c> can improve performance by avoiding thread context switches.</param>
+        /// <returns>A <see cref="ServiceResult"/> instance representing the status of the completed request</returns>
 		public static Task<ServiceResult<T>> WaitForResponse<T>(this Task<T> task, bool continueOnCapturedContext = true)
 		{
 			return WaitForResponse(task, new ApiExceptionHandlerConfig(), continueOnCapturedContext);
 		}
+
         /// <summary>
-        ///  method to wait for response to come back from api request
+        /// Waits for an API request to complete and return a response
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="config"></param>
-        /// <param name="continueOnCapturedContext"></param>
-        /// <returns></returns>
+        /// <param name="task">A <see cref="Task"/> representing the API request to be awaited</param>
+        /// <param name="config">A <see cref="ApiExceptionHandlerConfig"/> specifying any error handlers and logger to use</param>
+        /// <param name="continueOnCapturedContext">Specifies whether the resonse should return on the same thread as the request.
+        /// Setting this value to <c>false</c> can improve performance by avoiding thread context switches.</param>
+        /// <returns>A <see cref="ServiceResult"/> instance representing the status of the completed request</returns>
 		public static async Task<ServiceResult> WaitForResponse(this Task task, ApiExceptionHandlerConfig config, bool continueOnCapturedContext = true)
 		{
 			try
@@ -128,20 +71,22 @@ namespace ChilliSource.Mobile.Api
 				return ServiceResult.AsFailure(new ApiHandledException(ex));
 			}
 		}
+
         /// <summary>
-        /// method to wait for response to come back from api request
+        /// Waits for an API request to complete and return a response
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="task"></param>
-        /// <param name="config"></param>
-        /// <param name="continueOnCapturedContext"></param>
-        /// <returns></returns>
+        /// <param name="task">A <see cref="Task"/> representing the API request to be awaited</param>
+        /// <param name="config">A <see cref="ApiExceptionHandlerConfig"/> specifying any error handlers and logger to use</param>
+        /// <param name="continueOnCapturedContext">Specifies whether the resonse should return on the same thread as the request.
+        /// Setting this value to <c>false</c> can improve performance by avoiding thread context switches.</param>
+        /// <returns>A <see cref="ServiceResult"/> instance representing the status of the completed request</returns>
 		public static async Task<ServiceResult<T>> WaitForResponse<T>(this Task<T> task, ApiExceptionHandlerConfig config, bool continueOnCapturedContext = true)
 		{
 			try
 			{
-				var r = await task.ConfigureAwait(continueOnCapturedContext);
-				return ServiceResult<T>.AsSuccess(r);
+				var result = await task.ConfigureAwait(continueOnCapturedContext);
+				return ServiceResult<T>.AsSuccess(result);
 			}
 			catch (ApiException ex)
 			{
@@ -154,37 +99,99 @@ namespace ChilliSource.Mobile.Api
 				return ServiceResult<T>.AsFailure(new ApiHandledException(ex));
 			}
 		}
+
         /// <summary>
-        /// log on failure result
+        /// Asynchronously logs an exception if the API request has failed
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="logHandler"></param>
+        /// <param name="task">A <see cref="Task"/> representing the API request</param>
+        /// <param name="logHandler">The logger to use</param>
         /// <returns></returns>
 		public static async Task<ServiceResult> Log(this Task<ServiceResult> task, Action<Exception> logHandler)
 		{
-
-			return await task
-				.OnFailureAsync(r =>
+			return await task.OnFailureAsync(result =>
 			{
-				logHandler(r.Exception);
+				logHandler(result.Exception);
 				return Task.Delay(0);
 			});
 		}
+
         /// <summary>
-        /// logging on failure result
+        /// Asynchronously logs an exception if the API request has failed
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="task"></param>
-        /// <param name="logHandler"></param>
+        /// <param name="task">A <see cref="Task"/> representing the API request</param>
+        /// <param name="logHandler">The logger to use</param>
         /// <returns></returns>
-		public static async Task<ServiceResult<T>> Log<T>(this Task<ServiceResult<T>> task, Action<Exception> logHandler)
+        public static async Task<ServiceResult<T>> Log<T>(this Task<ServiceResult<T>> task, Action<Exception> logHandler)
 		{
-			return await task
-				.OnFailureAsync(r =>
+			return await task.OnFailureAsync(result =>
 			{
-				logHandler(r.Exception);
+				logHandler(result.Exception);
 				return Task.Delay(0);
 			});
 		}
-	}
+
+        internal static void HandleException(ApiException exception, ApiExceptionHandlerConfig config)
+        {
+            if (IsSessionExpired(exception))
+            {
+                HandleSessionExpiry(exception, config);
+            }
+            else if (HasNoNetworkConnectivity(exception, config))
+            {
+                HandleNoNetworkConnectivity(exception, config);
+            }
+            else if (!exception.HasContent)
+            {
+                LogException(exception, "", config.Logger);
+            }
+        }
+
+        internal static void LogException(Exception exception, string message, ILogger logger = null)
+        {
+            logger?.Error(exception, message);
+        }
+
+        internal static bool IsSessionExpired(ApiException ex)
+        {
+            if (ex.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        internal static void HandleSessionExpiry(ApiException exception, ApiExceptionHandlerConfig config)
+        {
+            config.OnSessionExpired?.Invoke(ServiceResult.AsFailure(ErrorMessages.SessionTimedout, (int)exception.StatusCode));
+        }
+
+        internal static bool HasNoNetworkConnectivity(ApiException exception, ApiExceptionHandlerConfig config)
+        {
+            if (exception.HasContent && exception.StatusCode == HttpStatusCode.RequestTimeout)
+            {
+                try
+                {
+                    var result = exception.GetErrorResult(ApiConfiguration.DefaultJsonSerializationSettingsFactory());
+                    if (String.Equals(result.ErrorMessages(), ErrorMessages.NoNetWorkError, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+                catch (Exception internalException)
+                {
+                    LogException(internalException, "No network connectivity");
+                }
+            }
+
+            return false;
+        }
+
+        internal static void HandleNoNetworkConnectivity(ApiException exception, ApiExceptionHandlerConfig config)
+        {
+            var r = exception.GetErrorResult(ApiConfiguration.DefaultJsonSerializationSettingsFactory());
+            config.OnNoNetworkConnectivity?.Invoke(ServiceResult.AsFailure(r.ErrorMessages(), ErrorMessages.NoNetworkErrorCode));
+        }
+    }
 }

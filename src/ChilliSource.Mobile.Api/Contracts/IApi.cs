@@ -13,18 +13,24 @@ using Newtonsoft.Json;
 
 namespace ChilliSource.Mobile.Api
 {
+    /// <summary>
+    /// Interface for <see cref="ApiManager{T}"/>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
 	public interface IApi<T>
 	{
         /// <summary>
-        /// gets Refit Api client proxy interface
+        /// Refit Api client proxy interface
         /// </summary>
 		T Client { get; }
+        
         /// <summary>
-        /// gets json.net serialization settings
+        /// Json.Net serialization settings
         /// </summary>
 		JsonSerializerSettings JsonSerializationSettings { get; }
+
         /// <summary>
-        /// gets base url of the api eg: https://api.bluechilli.com/
+        /// Base url of the Api e.g.: https://api.bluechilli.com/
         /// </summary>
 		string BaseUrl { get; }
 	}

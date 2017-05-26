@@ -9,22 +9,17 @@ See the LICENSE file in the project root for more information.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Refit;
-using ChilliSource.Mobile.Core;
 
 namespace ChilliSource.Mobile.Api
 {
     /// <summary>
-    /// delegation handler to handle api authentication on the request
+    ///  A <see cref="DelegatingHandler"/> that responds to an API authentication check 
+    ///  and provides the required authentication keys and relevant HTTP headers
     /// </summary>
-	public class ApiAuthenticatedHandler : DelegatingHandler
+	public class ApiAuthenticationHandler : DelegatingHandler
 	{
 		private const string ApiKey = "ApiKey";
 		private const string UserKey = "UserKey";
@@ -35,7 +30,12 @@ namespace ChilliSource.Mobile.Api
 
 		private readonly Func<Task<ApiToken>> _getToken;
 
-		public ApiAuthenticatedHandler(Func<Task<ApiToken>> getToken, HttpMessageHandler innerHandler) : base(innerHandler)
+        /// <summary>
+        /// Initializes new instance with provided parameters
+        /// </summary>
+        /// <param name="getToken"></param>
+        /// <param name="innerHandler"></param>
+		public ApiAuthenticationHandler(Func<Task<ApiToken>> getToken, HttpMessageHandler innerHandler) : base(innerHandler)
 		{
 			_getToken = getToken;
 		}
