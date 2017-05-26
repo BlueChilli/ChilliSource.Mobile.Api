@@ -9,44 +9,38 @@ See the LICENSE file in the project root for more information.
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using ChilliSource.Mobile.Core;
 using Newtonsoft.Json;
-using Plugin.Connectivity;
 using Plugin.Connectivity.Abstractions;
-using Refit;
 
 namespace ChilliSource.Mobile.Api
 {
     /// <summary>
-    /// delegation handler to check whether there are network connectivity before the api request
+    /// A <see cref="DelegatingHandler"/> to check whether there is network connectivity before an API request is sent
     /// </summary>
 	public class NoNetworkHandler : DelegatingHandler
 	{
-		readonly IConnectivity connectivity;
+		private readonly IConnectivity _connectivity;
 
+        /// <summary>
+        /// Creates new instance using a <see cref="IConnectivity"/> implementation and a nested handler
+        /// </summary>
+        /// <param name="connectivity">Provided from the Connectiviy Plugin (https://github.com/jamesmontemagno/ConnectivityPlugin</param>)
+        /// <param name="innerHandler">additional used to chain multiple handlers together</param>
 		public NoNetworkHandler(IConnectivity connectivity, HttpMessageHandler innerHandler) : base(innerHandler)
 		{
-			if (connectivity == null)
-			{
-				throw new ArgumentNullException(nameof(connectivity));
-			}
-
-			this.connectivity = connectivity;
+            _connectivity = connectivity ?? throw new ArgumentNullException(nameof(connectivity));
 		}
 
 		protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
-			if (connectivity.IsConnected)
+			if (_connectivity.IsConnected)
 			{
 				return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
 			}
-
 
 			var errorResult = new ErrorResult()
 			{

@@ -14,10 +14,16 @@ using ChilliSource.Mobile.Core;
 namespace ChilliSource.Mobile.Api
 {
     /// <summary>
-    /// configuration which holds information about handlers and logger 
+    /// Request-specific configuration holding exception handlers and an <see cref="ILogger"/> instance
     /// </summary>
 	public class ApiExceptionHandlerConfig
 	{
+        /// <summary>
+        /// Initializes instance by setting properties to specified parameters
+        /// </summary>
+        /// <param name="onSessionExpired"></param>
+        /// <param name="onNoNetworkConnectivity"></param>
+        /// <param name="logger"></param>
 		public ApiExceptionHandlerConfig(Action<ServiceResult> onSessionExpired = null,
 								 Action<ServiceResult> onNoNetworkConnectivity = null,
 								 ILogger logger = null)
@@ -28,15 +34,17 @@ namespace ChilliSource.Mobile.Api
 		}
 
         /// <summary>
-        /// gets action to be executed when session expires
+        /// Action to be executed when session expires
         /// </summary>
 		public Action<ServiceResult> OnSessionExpired { get; }
+        
         /// <summary>
-        /// gets action to be executed when there is no network activity
+        /// Action to be executed when the network connection becomes unavailable
         /// </summary>
 		public Action<ServiceResult> OnNoNetworkConnectivity { get; }
+        
         /// <summary>
-        /// gets logger
+        /// <see cref="ILogger"/> for logging exceptions for the API requested associated with this instance
         /// </summary>
 		public ILogger Logger { get; }
 	}

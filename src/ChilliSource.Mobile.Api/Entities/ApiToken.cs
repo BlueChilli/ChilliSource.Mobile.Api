@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 namespace ChilliSource.Mobile.Api
 {
     /// <summary>
-    /// Represents the application and authentication data to be added for every api request
+    /// Represents the application and authentication data to be added to every API request
     /// </summary>
 	public class ApiToken
 	{
@@ -32,37 +32,62 @@ namespace ChilliSource.Mobile.Api
 		}
 
         /// <summary>
-        /// gets api for api request
+        /// API authorization key
         /// </summary>
 		public string ApiKey { get; }
-		public string AppId => _environmentInformation.AppId;
-		public string AppVersion => _environmentInformation.AppVersion;
-		public string Timezone => _environmentInformation.Timezone;
-		public string Platform => _environmentInformation.Platform;
+
         /// <summary>
-        /// gets auth key for api request
+        /// The unique id of the currently executing app
+        /// </summary>
+        public string AppId => _environmentInformation.AppId;
+
+        /// <summary>
+        /// The version of the currently executing app
+        /// </summary>
+        public string AppVersion => _environmentInformation.AppVersion;
+
+        /// <summary>
+        /// The user's time zone
+        /// </summary>
+        public string Timezone => _environmentInformation.Timezone;
+
+        /// <summary>
+        /// The OS on which the currently executing app is running
+        /// </summary>
+        public string Platform => _environmentInformation.Platform;
+       
+        /// <summary>
+        /// User authentication key
         /// </summary>
 		public string UserKey { get; set; }
 
         /// <summary>
-        /// update the user key
+        /// Returns new <see cref="ApiToken"/> instance including the provided <paramref name="userKey"/>
         /// </summary>
-        /// <param name="userKey"></param>
-        /// <returns></returns>
+        /// <param name="userKey">User authentication key</param>
+        /// <returns>A new <see cref="ApiToken"/></returns>
 		public ApiToken WithUserKey(string userKey)
 		{
 			return new ApiToken(this.ApiKey, _environmentInformation, userKey);
 		}
 
-		public ApiToken WithEnvironment(IEnvironmentInformation environment)
+        /// <summary>
+        /// Returns new <see cref="ApiToken"/> instance including the provided <paramref name="environmentInformation"/>
+        /// </summary>
+        /// <param name="environmentInformation"><see cref="IEnvironmentInformation"/> implementation storing app specific meta-data</param>
+        /// <returns>A new <see cref="ApiToken"/></returns>
+		public ApiToken WithEnvironment(IEnvironmentInformation environmentInformation)
 		{
-			return new ApiToken(this.ApiKey, environment, this.UserKey);
+			return new ApiToken(this.ApiKey, environmentInformation, this.UserKey);
 		}
 
+        /// <summary>
+        /// Returns an empty <see cref="ApiToken"/>
+        /// </summary>
 		public static ApiToken Empty => new ApiToken(String.Empty, EnvironmentInformation.Empty, String.Empty);
 
         /// <summary>
-        /// check that this token is empty
+        /// Checks that this <see cref="ApiToken"/> instance is empty
         /// </summary>
         /// <returns></returns>
 		public bool IsEmpty()
@@ -76,7 +101,7 @@ namespace ChilliSource.Mobile.Api
 		}
 
         /// <summary>
-        /// check that token has authentication information
+        /// Checks that this <see cref="ApiToken"/> instance has a <see cref="UserKey"/>
         /// </summary>
         /// <returns></returns>
 		public bool HasUserKey()

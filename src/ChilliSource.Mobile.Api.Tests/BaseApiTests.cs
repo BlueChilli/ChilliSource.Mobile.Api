@@ -20,7 +20,7 @@ namespace Api
 
 		protected HttpMessageHandler GetHandler(ApiToken token, HttpMessageHandler innerHandler)
 		{
-			return new ApiAuthenticatedHandler(() =>
+			return new ApiAuthenticationHandler(() =>
 			   {
 				   return Task.FromResult(token);
 			   }, innerHandler);

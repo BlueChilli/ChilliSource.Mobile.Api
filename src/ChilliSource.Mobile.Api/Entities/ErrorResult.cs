@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 namespace ChilliSource.Mobile.Api
 {
     /// <summary>
-    /// Represent the error response from api
+    /// Represents the error response of a failed API request
     /// </summary>
     public class ErrorResult
     {
@@ -31,6 +31,10 @@ namespace ChilliSource.Mobile.Api
         [JsonProperty("errorMessage")]
         public string ErrorMessage { get; set; }
 
+        /// <summary>
+        /// Returns a newline-separated list of error messages
+        /// </summary>
+        /// <returns></returns>
 		public string ErrorMessages()
 		{
 			if (!String.IsNullOrWhiteSpace(ErrorMessage))
@@ -40,9 +44,9 @@ namespace ChilliSource.Mobile.Api
 
 			var builder = new StringBuilder();
 
-			foreach (var e in Errors)
+			foreach (var error in Errors)
 			{
-				builder.AppendLine(e);
+				builder.AppendLine(error);
 			}
 
 			return builder.ToString();

@@ -16,17 +16,17 @@ using Refit;
 namespace ChilliSource.Mobile.Api
 {
     /// <summary>
-    /// factory class to construct the api proxy
+    /// Factory class to construct a Refit API proxy client
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The Refit interface defining the API endpoints</typeparam>
 	public class ApiClientFactory<T>
 	{
         /// <summary>
-        /// create api client
+        /// Creates a new Refit API client that provides strongly typed methods for accesing the API endpoints
         /// </summary>
-        /// <param name="baseAddress"></param>
-        /// <param name="messageHandlersFactory"></param>
-        /// <param name="jsonSerializerSettingsFactory"></param>
+        /// <param name="baseAddress">API base URL</param>
+        /// <param name="messageHandlersFactory">Function that returns the Http message handler to pass to Refit's internal <see cref="HttpClient"/></param>
+        /// <param name="jsonSerializerSettingsFactory">Function that returns the Json serializer settings to use</param>
         /// <returns></returns>
 		protected static T CreateClient(string baseAddress, Func<HttpMessageHandler> messageHandlersFactory, Func<JsonSerializerSettings> jsonSerializerSettingsFactory)
 		{
