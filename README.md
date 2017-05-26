@@ -162,7 +162,7 @@ var handler = new ApiExceptionHandlerConfig(onSessionExpired: result =>
 var result = await manager.Client
             .Login(new LoginRequest("username", "password"))
             .WaitForResponse(handler, continueOnCapturedContext: true)
-             .OnFailure((failureResult) =>
+            .OnFailure((failureResult) =>
                 {
                     Console.WriteLine(failureResult.StatusCode);
                 });
