@@ -87,19 +87,19 @@ var loginResult = await manager.Client
                 .Login(new LoginRequest("username", "password"))
                 .WaitForResponse(continueOnCapturedContext: true)
                 .OnFailure((result) =>
-                {
-                    Console.WriteLine(result.StatusCode);
-                })
+                    {
+                        Console.WriteLine(result.StatusCode);
+                    })
                 .OnCancelled(() =>
-                {
-                    Console.WriteLine("Login cancelled");
-                })
+                    {
+                        Console.WriteLine("Login cancelled");
+                    })
                 .OnSuccess((result) =>
-                {
-                    var authenticatedUser = result.Result;
-                    Console.WriteLine("Welcome: " + authenticatedUser.Name);
-                    return result;
-                }); 
+                    {
+                        var authenticatedUser = result.Result;
+                        Console.WriteLine("Welcome: " + authenticatedUser.Name);
+                        return result;
+                    }); 
 ```
 
 Or asynchronous like this:
@@ -109,27 +109,27 @@ var loginResult = await manager.Client
                 .Login(new LoginRequest("username", "password"))
                 .WaitForResponse(continueOnCapturedContext: true)
                 .OnFailure(async result =>
-                {
-                    await Task.Run(() =>
                     {
-                        Console.WriteLine(result.StatusCode);
-                    });  
-                })
+                        await Task.Run(() =>
+                        {
+                            Console.WriteLine(result.StatusCode);
+                        });  
+                    })
                 .OnCancelled(async result =>
-                {
-                    await Task.Run(() =>
                     {
-                        Console.WriteLine("Login cancelled");
-                    });
-                })
+                        await Task.Run(() =>
+                        {
+                            Console.WriteLine("Login cancelled");
+                        });
+                    })
                 .OnSuccess(async result =>
-                {
-                    await Task.Run(() =>
                     {
-                        var authenticatedUser = result.Result;
-                        Console.WriteLine("Welcome: " + authenticatedUser.Name);
-                    });
-                }); 
+                        await Task.Run(() =>
+                        {
+                            var authenticatedUser = result.Result;
+                            Console.WriteLine("Welcome: " + authenticatedUser.Name);
+                        });
+                    }); 
 ```
 
 **Testing if there is no Network Connection**
@@ -143,12 +143,11 @@ You can test if there is no network connection like this:
 
     var result = await manager.Client
             .Login(new LoginRequest("username", "password"))
-            .WaitForResponse(handler, continueOnCapturedContext: true);
-
-if (result.IsFailure)
-{
-    Console.WriteLine(result.StatusCode);
-}
+            .WaitForResponse(handler, continueOnCapturedContext: true)
+            .OnFailure((failureResult) =>
+                {
+                    Console.WriteLine(failureResult.StatusCode);
+                });
 ```
 
 **Testing if the API Session has expired**
@@ -162,12 +161,11 @@ var handler = new ApiExceptionHandlerConfig(onSessionExpired: result =>
 
 var result = await manager.Client
             .Login(new LoginRequest("username", "password"))
-            .WaitForResponse(handler, continueOnCapturedContext: true);
-
-if (result.IsFailure)
-{
-    Console.WriteLine(result.StatusCode);
-}
+            .WaitForResponse(handler, continueOnCapturedContext: true)
+             .OnFailure((failureResult) =>
+                {
+                    Console.WriteLine(failureResult.StatusCode);
+                });
 ```
 
 ## Installation ##
