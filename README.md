@@ -53,10 +53,10 @@ var config = new ApiConfiguration(apiUrl, () =>
 });
 ```
 
-The ```ApiConfiguration`` class can take multiple HTTP handlers to deal with different types
+The ```ApiConfiguration``` class can take multiple HTTP handlers to deal with different types
 of HTTP events, such as an authentication request or a network connectivity issue.
 
-The ```NoNetworkHandler``` class relies on the [Connectivity Plugin](https://github.com/jamesmontemagno/ConnectivityPlugin);
+The ```NoNetworkHandler``` class relies on the [Connectivity Plugin](https://github.com/jamesmontemagno/ConnectivityPlugin).
 
 Additionally you can also handle the scenarios of the session expiring or the network connection becoming unavailable:
 
@@ -121,7 +121,7 @@ var loginResult = await manager.Client
                     }); 
 ```
 
-Or asynchronous like this:
+Or asynchronously like this:
 
 ```csharp
 var loginResult = await manager.Client
