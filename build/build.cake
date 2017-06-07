@@ -356,7 +356,6 @@ Action<string,string> build = (solution, buildConfiguration) =>
     			.WithProperty("NoWarn", "1591") // ignore missing XML doc warnings
 				.WithProperty("TreatWarningsAsErrors", treatWarningsAsErrors.ToString())
 			    .WithProperty("Version", nugetVersion.ToString())
-			    .WithProperty("Title",  "\"" + productName + "\"")
 			    .WithProperty("Authors",  "\"" + string.Join(" ", authors) + "\"")
 			    .WithProperty("Copyright",  "\"" + copyright + "\"")
 			    .WithProperty("PackageProjectUrl",  "\"" + githubUrl + "\"")
