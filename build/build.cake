@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 // ADDINS
 //////////////////////////////////////////////////////////////////////
 
-#addin "Cake.FileHelpers"
 #addin "Cake.Watch"
 #addin "Cake.AppleSimulator"
 #addin "Cake.Android.Adb"
@@ -18,11 +17,12 @@ using System.Text.RegularExpressions;
 #tool "GitVersion.CommandLine"
 #tool "GitLink"
 #tool "nuget:?package=xunit.runner.console"
+#tool nuget:?package=vswhere
+
 using Cake.Common.Build.TeamCity;
 using Cake.AppleSimulator.UnitTest;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
@@ -348,23 +348,39 @@ Action<string,string> build = (solution, buildConfiguration) =>
 	using(BuildBlock("Build")) 
 	{			
 		var packTarget = project.Replace(".", "_");
-		MSBuild(solution, settings => {
-				settings
-				.SetConfiguration(buildConfiguration)
-				.WithTarget(string.Format("restore;{0}:pack", packTarget))
-		        .WithProperty("PackageOutputPath",  MakeAbsolute(Directory(artifactDirectory)).ToString())
-    			.WithProperty("NoWarn", "1591") // ignore missing XML doc warnings
-				.WithProperty("TreatWarningsAsErrors", treatWarningsAsErrors.ToString())
-			    .WithProperty("Version", nugetVersion.ToString())
-			    .WithProperty("Authors",  "\"" + string.Join(" ", authors) + "\"")
-			    .WithProperty("Copyright",  "\"" + copyright + "\"")
-			    .WithProperty("PackageProjectUrl",  "\"" + githubUrl + "\"")
-			    .WithProperty("PackageIconUrl",  "\"" + iconUrl + "\"")
-			    .WithProperty("PackageLicenseUrl",  "\"" + licenceUrl + "\"")
-			    .WithProperty("PackageTags",  "\"" + string.Join(" ", tags) + "\"")
-			    .WithProperty("PackageReleaseNotes",  "\"" +  string.Format("{0}/releases", githubUrl) + "\"")
-			  	.SetVerbosity(Verbosity.Minimal)
-				.SetNodeReuse(false);
+
+		FilePath msBuildPath = null;
+
+		if(isRunningOnWindows) {
+		   msBuildPath = VSWhereLatest().CombineWithFilePath("./MSBuild/15.0/Bin/MSBuild.exe");
+		}  
+
+  		Information("{0}", msBuildPath);
+  		
+    	MSBuild(solution, settings => {
+			settings
+			.SetConfiguration(configuration);
+
+			if(isRunningOnWindows) {
+				settings.ToolPath = msBuildPath;
+			}
+
+			settings
+			.SetConfiguration(buildConfiguration)
+			.WithTarget(string.Format("restore;{0}:pack", packTarget))
+			.WithProperty("PackageOutputPath",  MakeAbsolute(Directory(artifactDirectory)).ToString())
+			.WithProperty("NoWarn", "1591") // ignore missing XML doc warnings
+			.WithProperty("TreatWarningsAsErrors", treatWarningsAsErrors.ToString())
+			.WithProperty("Version", nugetVersion.ToString())
+			.WithProperty("Authors",  "\"" + string.Join(" ", authors) + "\"")
+			.WithProperty("Copyright",  "\"" + copyright + "\"")
+			.WithProperty("PackageProjectUrl",  "\"" + githubUrl + "\"")
+			.WithProperty("PackageIconUrl",  "\"" + iconUrl + "\"")
+			.WithProperty("PackageLicenseUrl",  "\"" + licenceUrl + "\"")
+			.WithProperty("PackageTags",  "\"" + string.Join(" ", tags) + "\"")
+			.WithProperty("PackageReleaseNotes",  "\"" +  string.Format("{0}/releases", githubUrl) + "\"")
+			.SetVerbosity(Verbosity.Minimal)
+			.SetNodeReuse(false);
 
 				var msBuildLogger = GetMSBuildLoggerArguments();
 			
