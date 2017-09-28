@@ -423,7 +423,15 @@ Setup((context) =>
              Information("Not running on TeamCity");
         }
 
-         CleanDirectories(artifactDirectory);
+         
+      	DeleteFiles("../src/**/*.tmp");
+		DeleteFiles("../src/**/*.tmp.*");
+
+		CleanDirectories(GetDirectories("../src/**/obj"));
+		CleanDirectories(GetDirectories("../src/**/bin"));
+		DeleteDirectories(GetDirectories("../src/**/obj"));
+		DeleteDirectories(GetDirectories("../src/**/bin"));	
+		CleanDirectory(Directory(artifactDirectory));
 });
 
 Teardown((context) =>
