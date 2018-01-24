@@ -19,3 +19,4 @@ build/artifacts/
 build/tools/
 *.orig
 .vs
+!build/tools/packages.config
