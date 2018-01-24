@@ -16,6 +16,7 @@ Packages
 .vs/
 TestResult.xml
 build/artifacts/
-build/tools/
+build/tools/**
 *.orig
 .vs
+!build/tools/packages.config
