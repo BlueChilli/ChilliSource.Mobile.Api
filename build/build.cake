@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 // ADDINS
 //////////////////////////////////////////////////////////////////////
 
-#addin "Cake.FileHelpers"
 #addin "Cake.Watch"
 #addin "Cake.AppleSimulator"
 #addin "Cake.Android.Adb"
@@ -18,11 +17,12 @@ using System.Text.RegularExpressions;
 #tool "GitVersion.CommandLine"
 #tool "GitLink"
 #tool "nuget:?package=xunit.runner.console"
+#tool nuget:?package=vswhere
+
 using Cake.Common.Build.TeamCity;
 using Cake.AppleSimulator.UnitTest;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
@@ -84,10 +84,10 @@ var isRunningOnUnix = IsRunningOnUnix();
 var isRunningOnWindows = IsRunningOnWindows();
 var teamCity = BuildSystem.TeamCity;
 var branch = EnvironmentVariable("Git_Branch");
-var isPullRequest = !String.IsNullOrEmpty(branch) && branch.ToUpper().Contains("PULL-REQUEST"); //teamCity.Environment.PullRequest.IsPullRequest;
+var isPullRequest = !String.IsNullOrEmpty(branch) && branch.ToLower().Contains("refs/pull"); //teamCity.Environment.PullRequest.IsPullRequest;
 var projectName =  EnvironmentVariable("TEAMCITY_PROJECT_NAME"); //  teamCity.Environment.Project.Name;
 var isRepository = StringComparer.OrdinalIgnoreCase.Equals(productName, projectName);
-var isTagged = !String.IsNullOrEmpty(branch) && branch.ToUpper().Contains("TAGS");
+var isTagged = !String.IsNullOrEmpty(branch) && branch.ToLower().Contains("refs/tags");
 var buildConfName = EnvironmentVariable("TEAMCITY_BUILDCONF_NAME"); //teamCity.Environment.Build.BuildConfName
 var buildNumber = GetEnvironmentInteger("BUILD_NUMBER");
 var isReleaseBranch = StringComparer.OrdinalIgnoreCase.Equals("master", buildConfName) || StringComparer.OrdinalIgnoreCase.Equals("Release", buildConfName);
@@ -102,13 +102,32 @@ var githubRepository = config.Value<string>("githubRepository");
 var githubUrl = string.Format("https://github.com/{0}/{1}", githubOwner, githubRepository);
 var licenceUrl = string.Format("{0}/blob/master/LICENSE", githubUrl);
 
-// Version
-var gitVersion = GitVersion();
-var majorMinorPatch = gitVersion.MajorMinorPatch;
-var semVersion = gitVersion.SemVer;
-var informationalVersion = gitVersion.InformationalVersion;
-var nugetVersion = gitVersion.NuGetVersion;
-var buildVersion = gitVersion.FullBuildMetaData;
+string majorMinorPatch;
+string semVersion;
+string informationalVersion ;
+string nugetVersion;
+string buildVersion;
+
+Action SetGitVersionData = () => {
+
+	if(!isPullRequest) {
+		var gitVersion = GitVersion();
+		majorMinorPatch = gitVersion.MajorMinorPatch;
+		semVersion = gitVersion.SemVer;
+		informationalVersion = gitVersion.InformationalVersion;
+		nugetVersion = gitVersion.NuGetVersion;
+		buildVersion = gitVersion.FullBuildMetaData;
+	}
+	else {
+		majorMinorPatch = "1.0.0";
+		semVersion = "0";
+		informationalVersion ="1.0.0";
+		nugetVersion = "1.0.0";
+		buildVersion = "alpha";
+	}
+};
+
+SetGitVersionData();
 var copyright = config.Value<string>("copyright");
 var authors = config.Value<JArray>("authors").Values<string>().ToList();
 var iconUrl = config.Value<string>("iconUrl");
@@ -348,23 +367,39 @@ Action<string,string> build = (solution, buildConfiguration) =>
 	using(BuildBlock("Build")) 
 	{			
 		var packTarget = project.Replace(".", "_");
-		MSBuild(solution, settings => {
-				settings
-				.SetConfiguration(buildConfiguration)
-				.WithTarget(string.Format("restore;{0}:pack", packTarget))
-		        .WithProperty("PackageOutputPath",  MakeAbsolute(Directory(artifactDirectory)).ToString())
-    			.WithProperty("NoWarn", "1591") // ignore missing XML doc warnings
-				.WithProperty("TreatWarningsAsErrors", treatWarningsAsErrors.ToString())
-			    .WithProperty("Version", nugetVersion.ToString())
-			    .WithProperty("Authors",  "\"" + string.Join(" ", authors) + "\"")
-			    .WithProperty("Copyright",  "\"" + copyright + "\"")
-			    .WithProperty("PackageProjectUrl",  "\"" + githubUrl + "\"")
-			    .WithProperty("PackageIconUrl",  "\"" + iconUrl + "\"")
-			    .WithProperty("PackageLicenseUrl",  "\"" + licenceUrl + "\"")
-			    .WithProperty("PackageTags",  "\"" + string.Join(" ", tags) + "\"")
-			    .WithProperty("PackageReleaseNotes",  "\"" +  string.Format("{0}/releases", githubUrl) + "\"")
-			  	.SetVerbosity(Verbosity.Minimal)
-				.SetNodeReuse(false);
+
+		FilePath msBuildPath = null;
+
+		if(isRunningOnWindows) {
+		   msBuildPath = VSWhereLatest().CombineWithFilePath("./MSBuild/15.0/Bin/MSBuild.exe");
+		}  
+
+  		Information("{0}", msBuildPath);
+  		
+    	MSBuild(solution, settings => {
+			settings
+			.SetConfiguration(configuration);
+
+			if(isRunningOnWindows) {
+				settings.ToolPath = msBuildPath;
+			}
+
+			settings
+			.SetConfiguration(buildConfiguration)
+			.WithTarget(string.Format("restore;{0}:pack", packTarget))
+			.WithProperty("PackageOutputPath",  MakeAbsolute(Directory(artifactDirectory)).ToString())
+			.WithProperty("NoWarn", "1591") // ignore missing XML doc warnings
+			.WithProperty("TreatWarningsAsErrors", treatWarningsAsErrors.ToString())
+			.WithProperty("Version", nugetVersion.ToString())
+			.WithProperty("Authors",  "\"" + string.Join(" ", authors) + "\"")
+			.WithProperty("Copyright",  "\"" + copyright + "\"")
+			.WithProperty("PackageProjectUrl",  "\"" + githubUrl + "\"")
+			.WithProperty("PackageIconUrl",  "\"" + iconUrl + "\"")
+			.WithProperty("PackageLicenseUrl",  "\"" + licenceUrl + "\"")
+			.WithProperty("PackageTags",  "\"" + string.Join(" ", tags) + "\"")
+			.WithProperty("PackageReleaseNotes",  "\"" +  string.Format("{0}/releases", githubUrl) + "\"")
+			.SetVerbosity(Verbosity.Minimal)
+			.SetNodeReuse(false);
 
 				var msBuildLogger = GetMSBuildLoggerArguments();
 			
@@ -407,7 +442,15 @@ Setup((context) =>
              Information("Not running on TeamCity");
         }
 
-         CleanDirectories(artifactDirectory);
+         
+      	DeleteFiles("../src/**/*.tmp");
+		DeleteFiles("../src/**/*.tmp.*");
+
+		CleanDirectories(GetDirectories("../src/**/obj"));
+		CleanDirectories(GetDirectories("../src/**/bin"));
+		DeleteDirectories(GetDirectories("../src/**/obj"));
+		DeleteDirectories(GetDirectories("../src/**/bin"));	
+		CleanDirectory(Directory(artifactDirectory));
 });
 
 Teardown((context) =>
@@ -653,9 +696,9 @@ Task("PublishRelease")
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
-    .IsDependentOn("CreateRelease")
-    .IsDependentOn("PublishPackages")
-    .IsDependentOn("PublishRelease")
+	.IsDependentOn("CreateRelease")
+	.IsDependentOn("PublishPackages")
+	.IsDependentOn("PublishRelease")
     .Does (() =>
 {
 
