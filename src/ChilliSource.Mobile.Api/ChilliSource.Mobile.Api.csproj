@@ -20,7 +20,7 @@
     <DefineConstants>$(DefineConstants);</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup>
+   <ItemGroup>
     <Compile Include="**\*.cs" />
   </ItemGroup>
 
