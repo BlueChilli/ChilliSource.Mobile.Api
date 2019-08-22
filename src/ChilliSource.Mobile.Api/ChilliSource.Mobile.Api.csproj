@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;netstandard2.0;net462;</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;</TargetFrameworks>
     <AssemblyName>ChilliSource.Mobile.Api</AssemblyName>
     <RootNamespace>ChilliSource.Mobile.Api</RootNamespace>
     <Description>Api client library for ChilliSource Mobile</Description>
@@ -12,12 +12,19 @@
     <DebugType>pdbonly</DebugType>
     <Authors>BlueChilli Technology Pty Ltd</Authors>
     <SourceLinkUrl>https://github.com/BlueChilli/ChilliSource.Mobile.Api/</SourceLinkUrl>
-    <NoWarn></NoWarn>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateDocumentationFile Condition=" '$(Configuration)' == 'Release' ">true</GenerateDocumentationFile>
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <LangVersion>default</LangVersion>
     <DefineConstants>$(DefineConstants);</DefineConstants>
+    <RepositoryType>git</RepositoryType>
+    <IncludeSymbols>True</IncludeSymbols>
+    <IncludeSource>True</IncludeSource>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
+
   </PropertyGroup>
 
    <ItemGroup>
@@ -34,10 +41,10 @@
     <DotNetCliToolReference Include="dotnet-sourcelink" Version="2.0.2" />
     <DotNetCliToolReference Include="dotnet-sourcelink-git" Version="2.0.2" />
     <PackageReference Include="ChilliSource.Mobile.Core" Version="2.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
-    <PackageReference Include="refit" Version="4.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="refit" Version="4.7.51" />
     <PackageReference Include="SourceLink.Create.GitHub" Version="2.8.0" PrivateAssets="all" />
-    <PackageReference Include="Xam.Plugin.Connectivity" Version="3.1.1" />
+    <PackageReference Include="Xam.Plugin.Connectivity" Version="3.2.0" />
   </ItemGroup>
 
 </Project>

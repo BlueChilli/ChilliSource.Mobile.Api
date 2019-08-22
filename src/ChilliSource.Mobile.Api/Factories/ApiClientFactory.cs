@@ -47,7 +47,7 @@ namespace ChilliSource.Mobile.Api
 
 			return RestService.For<T>(client, new RefitSettings()
 			{
-				JsonSerializerSettings = jsonSerializerSettingsFactory()
+				ContentSerializer = new JsonContentSerializer(jsonSerializerSettingsFactory())
 			});
 		}
 
