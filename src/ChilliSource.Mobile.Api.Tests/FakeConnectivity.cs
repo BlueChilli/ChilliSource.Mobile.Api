@@ -11,7 +11,7 @@ See the LICENSE file in the project root for more information.
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Plugin.Connectivity.Abstractions;
+using ChilliSource.Mobile.Api;
 
 namespace Api
 {
@@ -24,23 +24,6 @@ namespace Api
 			this.mockConnected = mockConnected;
 		}
 
-		public IEnumerable<ulong> Bandwidths
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-		}
-	    public event ConnectivityChangedEventHandler ConnectivityChanged;
-
-	    public IEnumerable<ConnectionType> ConnectionTypes
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-		}
-
 		public bool IsConnected
 		{
 			get
@@ -49,21 +32,5 @@ namespace Api
 			}
 		}
 
-	    public event ConnectivityTypeChangedEventHandler ConnectivityTypeChanged;
-
-	    public void Dispose()
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<bool> IsReachable(string host, int msTimeout = 5000)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<bool> IsRemoteReachable(string host, int port = 80, int msTimeout = 5000)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

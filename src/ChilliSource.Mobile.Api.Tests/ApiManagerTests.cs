@@ -17,9 +17,6 @@ using ChilliSource.Mobile.Api;
 using ChilliSource.Mobile.Core;
 using Xunit;
 using RichardSzalay.MockHttp;
-using Plugin.Connectivity;
-using Plugin.Connectivity.Abstractions;
-using System.Collections.Generic;
 
 namespace Api
 {		

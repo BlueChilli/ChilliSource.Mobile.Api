@@ -14,10 +14,19 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Plugin.Connectivity.Abstractions;
 
 namespace ChilliSource.Mobile.Api
 {
+	public interface IConnectivity
+	{
+		/// <summary>
+        /// Gets if there is an active internet connection
+        /// </summary>
+        bool IsConnected { get; }
+
+    }
+
+	
     /// <summary>
     /// A <see cref="DelegatingHandler"/> to check whether there is network connectivity before an API request is sent
     /// </summary>
